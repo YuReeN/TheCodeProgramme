@@ -1,0 +1,11 @@
+
+import importlib.util
+
+spec = importlib.util.spec_from_file_location("Caesar", "C:/users/drpol/appdata/local/programs/python/python38/lib/site-packagescodes/Code_Programme/Caesar")
+Caesar = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(Caesar)
+
+
+
+Caesar.encrypt_caesar()
+

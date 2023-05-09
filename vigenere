@@ -1,0 +1,51 @@
+def encrypt_vigenere(text, key):
+    ciphertext = ""
+    key_index = 0
+    for char in text:
+        if char.isalpha():
+            shift = ord(key[key_index].lower()) - 97
+            if char.isupper():
+                ciphertext += chr((ord(char) - 65 + shift) % 26 + 65)
+            else:
+                ciphertext += chr((ord(char) - 97 + shift) % 26 + 97)
+            key_index = (key_index + 1) % len(key)
+        else:
+            ciphertext += char
+    return ciphertext
+
+def decrypt_vigenere(text, key):
+    plaintext = ""
+    key_index = 0
+    for char in text:
+        if char.isalpha():
+            shift = ord(key[key_index].lower()) - 97
+            if char.isupper():
+                plaintext += chr((ord(char) - 65 - shift) % 26 + 65)
+            else:
+                plaintext += chr((ord(char) - 97 - shift) % 26 + 97)
+            key_index = (key_index + 1) % len(key)
+        else:
+            plaintext += char
+    return plaintext
+
+
+encrypt_or_decrypt = input("暗号化または復号化 en OR de :")
+text = input("暗号化するテキスト: ")
+key =(input("鍵（alphabet）を指定してください: "))
+
+if encrypt_or_decrypt == "en":
+    changed_text = encrypt_vigenere(text, key)
+    print("暗号化されたテキスト: ", changed_text)
+
+elif encrypt_or_decrypt == "de":
+    changed_text = decrypt_vigenere(text, key)
+    print("復号化されたテキスト: ", changed_text)
+
+else:
+    import sys
+    print("もう一度選択してください")
+    sys.exit() 
+    #これが無くても終了するがエラーメッセージを出さずに済む
+
+
+#鍵にアルファベット以外を入れた時にも終了するようにする
