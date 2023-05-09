@@ -56,7 +56,7 @@ elif encrypt_or_decrypt == "de":
     print("復号化されたテキスト: ", changed_text)
 
 else:
-    print("失敗しました")
+    print("失敗しました。")
     sys.exit() 
     #これが無くても終了するがエラーメッセージを出さずに済む
 
