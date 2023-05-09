@@ -1,0 +1,67 @@
+# Completed
+
+import sys
+
+def encrypt_caesar(text, shift):
+    result = ""
+
+    for i in range(len(text)):
+        char = text[i]
+
+        if char.isupper():
+            result +=chr((ord(char) + shift - 65) % 26 + 65)
+
+        elif char.islower():
+            result += chr((ord(char) + shift - 97) % 26 + 97)
+
+        else:
+            result += char
+    
+    return result
+
+
+
+def decrypt_caesar(text, shift):
+    result = ""
+    shift = 26 - (shift % 26)
+  
+    # アルファベットの各文字について処理を行う
+    for i in range(len(text)):
+        char = text[i]
+        
+        # 大文字の場合
+        if char.isupper():
+            result += chr((ord(char) + shift - 65) % 26 + 65)
+        
+        # 小文字の場合
+        elif char.islower():
+            result += chr((ord(char) + shift - 97) % 26 + 97)
+        
+        # アルファベット以外の場合
+        else:
+            result += char
+    
+    return result
+
+encrypt_or_decrypt = input("暗号化または復号化 en OR de :")
+text = input("暗号化するテキスト: ")
+shift =int(input("シフト数（自然数）を指定してください: "))
+
+if encrypt_or_decrypt == "en":
+    changed_text = encrypt_caesar(text, shift)
+    print("暗号化されたテキスト: ", changed_text)
+
+elif encrypt_or_decrypt == "de":
+    changed_text = decrypt_caesar(text, shift)
+    print("復号化されたテキスト: ", changed_text)
+
+else:
+    print("もう一度選択してください")
+    sys.exit() 
+    #これが無くても終了するがエラーメッセージを出さずに済む
+
+
+
+
+
+
