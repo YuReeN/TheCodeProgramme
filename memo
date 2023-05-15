@@ -1,0 +1,103 @@
+import tkinter as tk
+from tkinter import messagebox
+
+def encrypt_vigenere(text, key):
+    # 暗号化の実装
+    # ...
+    ciphertext = ""  #初期化
+    key_index = 0    #初期化
+    for char in text:
+        
+        if char.isalpha():  #check whther char is alphabet
+            
+            shift = ord(key[key_index].lower()) - 97   #choose one of the key word and 
+            if char.isupper():
+                ciphertext += chr((ord(char) - 65 + shift) % 26 + 65)
+            else:
+                ciphertext += chr((ord(char) - 97 + shift) % 26 + 97)
+            key_index = (key_index + 1) % len(key)   #loop of the key
+        else:
+            ciphertext += char
+    return ciphertext
+
+def decrypt_vigenere(ciphertext, key):
+    # 復号化の実装
+    # ...
+    plaintext = ""
+    key_index = 0
+    
+    for char in text:
+        if char.isalpha():
+            shift = ord(key[key_index].lower()) - 97
+            if char.isupper():
+                plaintext += chr((ord(char) - 65 - shift) % 26 + 65)
+            else:
+                plaintext += chr((ord(char) - 97 - shift) % 26 + 97)
+            key_index = (key_index + 1) % len(key) #difference whether keyindex added 1 when notplphabet
+        else:
+            plaintext += char
+    return plaintext
+
+def process_text():
+    selected_cipher = cipher_selection.get()
+    operation = operation_selection.get()
+    key = key_entry.get()
+    plaintext = plaintext_entry.get()
+
+    if not key or not plaintext:
+        messagebox.showerror("Error", "Please enter both key and plaintext.")
+        return
+
+    if selected_cipher == "Vigenere":
+        if operation == "Encrypt":
+            ciphertext = encrypt_vigenere(plaintext, key)
+            output_text.delete("1.0", tk.END)
+            output_text.insert(tk.END, ciphertext)
+        elif operation == "Decrypt":
+            decrypted_text = decrypt_vigenere(plaintext, key)
+            output_text.delete("1.0", tk.END)
+            output_text.insert(tk.END, decrypted_text)
+
+# GUIの作成
+window = tk.Tk()
+window.title("Cipher Program")
+
+# 暗号の種類の指定
+cipher_label = tk.Label(window, text="Cipher:")
+cipher_label.pack()
+cipher_selection = tk.StringVar(window)
+cipher_selection.set("Vigenere")
+cipher_menu = tk.OptionMenu(window, cipher_selection, "Vigenere")
+cipher_menu.pack()
+
+# 暗号化・復号化の指定
+operation_label = tk.Label(window, text="Operation:")
+operation_label.pack()
+operation_selection = tk.StringVar(window)
+operation_selection.set("Encrypt")
+operation_menu = tk.OptionMenu(window, operation_selection, "Encrypt", "Decrypt")
+operation_menu.pack()
+
+# 鍵の入力
+key_label = tk.Label(window, text="Key:")
+key_label.pack()
+key_entry = tk.Entry(window)
+key_entry.pack()
+
+# 平文の入力
+plaintext_label = tk.Label(window, text="Plaintext:")
+plaintext_label.pack()
+plaintext_entry = tk.Entry(window)
+plaintext_entry.pack()
+
+# 実行ボタン
+process_button = tk.Button(window, text="Process", command=process_text)
+process_button.pack()
+
+# 暗号化・復号化された文章の出力
+output_label = tk.Label(window, text="Output:")
+output_label.pack()
+output_text = tk.Text(window, height=10, width=50)
+output_text.pack()
+
+window.mainloop()
