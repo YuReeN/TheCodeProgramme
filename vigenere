@@ -1,14 +1,16 @@
 def encrypt_vigenere(text, key):
-    ciphertext = ""
-    key_index = 0
+    ciphertext = ""  #初期化
+    key_index = 0    #初期化
     for char in text:
-        if char.isalpha():
-            shift = ord(key[key_index].lower()) - 97
+        
+        if char.isalpha():  #check whther char is alphabet
+            
+            shift = ord(key[key_index].lower()) - 97   #choose one of the key word and 
             if char.isupper():
                 ciphertext += chr((ord(char) - 65 + shift) % 26 + 65)
             else:
                 ciphertext += chr((ord(char) - 97 + shift) % 26 + 97)
-            key_index = (key_index + 1) % len(key)
+            key_index = (key_index + 1) % len(key)   #loop of the key
         else:
             ciphertext += char
     return ciphertext
@@ -16,6 +18,7 @@ def encrypt_vigenere(text, key):
 def decrypt_vigenere(text, key):
     plaintext = ""
     key_index = 0
+    
     for char in text:
         if char.isalpha():
             shift = ord(key[key_index].lower()) - 97
@@ -23,28 +26,44 @@ def decrypt_vigenere(text, key):
                 plaintext += chr((ord(char) - 65 - shift) % 26 + 65)
             else:
                 plaintext += chr((ord(char) - 97 - shift) % 26 + 97)
-            key_index = (key_index + 1) % len(key)
+            key_index = (key_index + 1) % len(key) #difference whether keyindex added 1 when notplphabet
         else:
             plaintext += char
     return plaintext
 
 
+import sys
+
 encrypt_or_decrypt = input("暗号化または復号化 en OR de :")
-text = input("暗号化するテキスト: ")
-key =(input("鍵（alphabet）を指定してください: "))
+if encrypt_or_decrypt == "en" or encrypt_or_decrypt == "de":
+    text = input("暗号化するテキスト: ")
+    # if text.isalpha():
+    key =(input("鍵（alphabet）を指定してください: "))
+    # else:
+    #     print("テキストはアルファベットを入力してください")
+    #     sys.exit()
+else:
+    print("暗号・復号を指定してください")
+    sys.exit()
 
-if encrypt_or_decrypt == "en":
-    changed_text = encrypt_vigenere(text, key)
-    print("暗号化されたテキスト: ", changed_text)
 
-elif encrypt_or_decrypt == "de":
-    changed_text = decrypt_vigenere(text, key)
-    print("復号化されたテキスト: ", changed_text)
+if key.isalpha():
+    if encrypt_or_decrypt == "en":
+        changed_text = encrypt_vigenere(text, key)
+        print("暗号化されたテキスト: ", changed_text)
+
+    elif encrypt_or_decrypt == "de":
+        changed_text = decrypt_vigenere(text, key)
+        print("復号化されたテキスト: ", changed_text)
+
+    else:
+        print("バグです")
+        sys.exit() 
 
 else:
-    import sys
-    print("もう一度選択してください")
-    sys.exit() 
+    print("鍵はアルファベットにしてください")
+    sys.exit()
+
     #これが無くても終了するがエラーメッセージを出さずに済む
 
 
