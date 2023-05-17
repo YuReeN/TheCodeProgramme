@@ -90,7 +90,7 @@ def process_text():
     #ウィジェットの入力値を取得する
     selected_cipher = cipher_selection.get()
     operation = operation_selection.get()
-    plaintext = plaintext_entry.get()
+    plaintext = plaintext_entry.get("1.0", tk.END)
     if re.match("^[A-Za-z]+$", plaintext):
 
         #平文と鍵のうち一つでも空欄のときエラーメッセージを出力
@@ -144,7 +144,7 @@ window = tk.Tk()
 window.title("Cipher Program")
 
 # 暗号の種類の指定
-cipher_label = tk.Label(window, text="Cipher:")
+cipher_label = tk.Label(window, font=("Arial",15), text="Cipher:")
 cipher_label.pack()
 cipher_selection = tk.StringVar(window)
 cipher_selection.set("Caesar")
@@ -152,7 +152,7 @@ cipher_menu = tk.OptionMenu(window, cipher_selection, "Caesar", "Vigenere")
 cipher_menu.pack()
 
 # 暗号化・復号化の指定
-operation_label = tk.Label(window, text="Operation:")
+operation_label = tk.Label(window, font=("Arial",15), text="Operation:")
 operation_label.pack()
 operation_selection = tk.StringVar(window)
 operation_selection.set("Encrypt")
@@ -160,25 +160,33 @@ operation_menu = tk.OptionMenu(window, operation_selection, "Encrypt", "Decrypt"
 operation_menu.pack()
 
 # 鍵の入力
-key_label = tk.Label(window, text="Key:")
+key_label = tk.Label(window, font=("Arial",15), text="Key:")
 key_label.pack()
-key_entry = tk.Entry(window)
+key_entry = tk.Entry(window, font=("Arial",12), width=20)
 key_entry.pack()
 
 # 平文の入力
-plaintext_label = tk.Label(window, text="Plaintext:")
+plaintext_label = tk.Label(window, font=("Arial",15), text="Plaintext:")
 plaintext_label.pack()
-plaintext_entry = tk.Entry(window)
+plaintext_entry = tk.Text(window, font=("Arial",12), height=3)
 plaintext_entry.pack()
 
 # 実行ボタン
-process_button = tk.Button(window, text="Process", command=process_text)
+process_button = tk.Button(window, font=("Arial",20), text="Process", command=process_text, bd=12)
 process_button.pack()
 
 # 暗号化・復号化された文章の出力
-output_label = tk.Label(window, text="Output:")
+output_label = tk.Label(window, font=("Arial",15), text="Output:")
 output_label.pack()
-output_text = tk.Text(window, height=10, width=50)
+output_text = tk.Text(window, font=("Arial",12), height=10, width=50)
 output_text.pack()
+
+
+# testselection = tk.StringVar(window)
+# testselection.set("hello00")
+# testselection_menu = tk.OptionMenu(window, testselection,"a", "b","c")
+# testselection_menu.pack()
+# testselection_label = tk.Label(window, textvariable=testselection, font=("Arial",12))
+# testselection_label.pack()
 
 window.mainloop()
