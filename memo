@@ -1,5 +1,51 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
+import re
+
+
+def encrypt_caesar(text, shift):
+    result = ""
+
+    for i in range(len(text)):
+        char = text[i]
+
+        if char.isupper():
+            result +=chr((ord(char) + shift - 65) % 26 + 65)
+
+        elif char.islower():
+            result += chr((ord(char) + shift - 97) % 26 + 97)
+
+        else:
+            result += char
+    
+    return result
+
+def decrypt_caesar(text, shift):
+    result = ""
+    shift = 26 - (shift % 26)
+  
+    # アルファベットの各文字について処理を行う
+    for i in range(len(text)):
+        char = text[i]
+        
+        # 大文字の場合
+        if char.isupper():
+            result += chr((ord(char) + shift - 65) % 26 + 65)
+        
+        # 小文字の場合
+        elif char.islower():
+            result += chr((ord(char) + shift - 97) % 26 + 97)
+        
+        # アルファベット以外の場合
+        else:
+            result += char
+    
+    return result
+
+
+
+
 
 def encrypt_vigenere(text, key):
     # 暗号化の実装
@@ -20,7 +66,7 @@ def encrypt_vigenere(text, key):
             ciphertext += char
     return ciphertext
 
-def decrypt_vigenere(ciphertext, key):
+def decrypt_vigenere(text, key):
     # 復号化の実装
     # ...
     plaintext = ""
@@ -38,40 +84,87 @@ def decrypt_vigenere(ciphertext, key):
             plaintext += char
     return plaintext
 
+
+
+
+
 def process_text():
+    #ウィジェットの入力値を取得する
     selected_cipher = cipher_selection.get()
     operation = operation_selection.get()
-    key = key_entry.get()
-    plaintext = plaintext_entry.get()
+    plaintext = plaintext_entry.get("1.0", tk.END)
+    if re.match("^[A-Za-z]+$", plaintext):
 
-    if not key or not plaintext:
-        messagebox.showerror("Error", "Please enter both key and plaintext.")
-        return
+        #平文と鍵のうち一つでも空欄のときエラーメッセージを出力
 
-    if selected_cipher == "Vigenere":
-        if operation == "Encrypt":
-            ciphertext = encrypt_vigenere(plaintext, key)
-            output_text.delete("1.0", tk.END)
-            output_text.insert(tk.END, ciphertext)
-        elif operation == "Decrypt":
-            decrypted_text = decrypt_vigenere(plaintext, key)
-            output_text.delete("1.0", tk.END)
-            output_text.insert(tk.END, decrypted_text)
+        if selected_cipher == "Caesar":
+            try:
+                a = key_entry.get()
+                key = int(a)
+            except:
+                messagebox.showerror("error" , "key must be integer")
+
+            if type(key) == int:
+                if operation == "Encrypt":
+                    ciphertext = encrypt_caesar(plaintext, key)
+                    output_text.delete("1.0", tk.END)
+                    output_text.insert(tk.END, ciphertext)
+                elif operation == "Decrypt":
+                    decrypted_text = decrypt_caesar(plaintext, key)
+                    output_text.delete("1.0", tk.END)
+                    output_text.insert(tk.END, decrypted_text)
+            else:
+                messagebox.showerror("error" , "key must be integer")
+                return
+
+        if selected_cipher == "Vigenere":
+            key = key_entry.get()
+            if re.match("^[A-Za-z]+$", key):
+                if operation == "Encrypt":
+                    ciphertext = encrypt_vigenere(plaintext, key)
+                    output_text.delete("1.0", tk.END)
+                    output_text.insert(tk.END, ciphertext)
+                elif operation == "Decrypt":
+                    decrypted_text = decrypt_vigenere(plaintext, key)
+                    output_text.delete("1.0", tk.END)
+                    output_text.insert(tk.END, decrypted_text)
+            else:
+                messagebox.showerror("error", "key must be alphabet")
+
+        if not key or not plaintext:
+            messagebox.showerror("error", "Please enter both key and plaintext.")
+            # return
+    else:
+        messagebox.showerror("error", "plaintext mudt be alphabet")
+
+
+
+
 
 # GUIの作成
 window = tk.Tk()
 window.title("Cipher Program")
 
+notebook = ttk.Notebook(window)
+
+tab_caesar = ttk.Frame(notebook)
+notebook.add(tab_caesar, text="Caesar")
+
+
+tab_vigenere = ttk.Frame(notebook)
+notebook.add(tab_vigenere, "Vigenere")
+
+
 # 暗号の種類の指定
-cipher_label = tk.Label(window, text="Cipher:")
+cipher_label = tk.Label(window, font=("Arial",15), text="Cipher:")
 cipher_label.pack()
 cipher_selection = tk.StringVar(window)
-cipher_selection.set("Vigenere")
-cipher_menu = tk.OptionMenu(window, cipher_selection, "Vigenere")
+cipher_selection.set("Caesar")
+cipher_menu = tk.OptionMenu(window, cipher_selection, "Caesar", "Vigenere")
 cipher_menu.pack()
 
 # 暗号化・復号化の指定
-operation_label = tk.Label(window, text="Operation:")
+operation_label = tk.Label(window, font=("Arial",15), text="Operation:")
 operation_label.pack()
 operation_selection = tk.StringVar(window)
 operation_selection.set("Encrypt")
@@ -79,25 +172,35 @@ operation_menu = tk.OptionMenu(window, operation_selection, "Encrypt", "Decrypt"
 operation_menu.pack()
 
 # 鍵の入力
-key_label = tk.Label(window, text="Key:")
+key_label = tk.Label(window, font=("Arial",15), text="Key:")
 key_label.pack()
-key_entry = tk.Entry(window)
+key_entry = tk.Entry(window, font=("Arial",12), width=20)
 key_entry.pack()
 
 # 平文の入力
-plaintext_label = tk.Label(window, text="Plaintext:")
+plaintext_label = tk.Label(window, font=("Arial",15), text="Plaintext:")
 plaintext_label.pack()
-plaintext_entry = tk.Entry(window)
+plaintext_entry = tk.Text(window, font=("Arial",12), height=3)
 plaintext_entry.pack()
 
 # 実行ボタン
-process_button = tk.Button(window, text="Process", command=process_text)
+process_button = tk.Button(window, font=("Arial",20), text="Process", command=process_text, bd=12)
 process_button.pack()
 
 # 暗号化・復号化された文章の出力
-output_label = tk.Label(window, text="Output:")
+output_label = tk.Label(window, font=("Arial",15), text="Output:")
 output_label.pack()
-output_text = tk.Text(window, height=10, width=50)
+output_text = tk.Text(window, font=("Arial",12), height=10, width=50)
 output_text.pack()
+
+
+# testselection = tk.StringVar(window)
+# testselection.set("hello00")
+# testselection_menu = tk.OptionMenu(window, testselection,"a", "b","c")
+# testselection_menu.pack()
+# testselection_label = tk.Label(window, textvariable=testselection, font=("Arial",12))
+# testselection_label.pack()
+
+notebook.pack()
 
 window.mainloop()

@@ -1,0 +1,55 @@
+def encrypt_simple_polybius(plaintext):
+    polybius_table = {
+        'A': '11', 'B': '12', 'C': '13', 'D': '14', 'E': '15',
+        'F': '21', 'G': '22', 'H': '23', 'I': '24', 'J': '24', 'K': '25',
+        'L': '31', 'M': '32', 'N': '33', 'O': '34', 'P': '35',
+        'Q': '41', 'R': '42', 'S': '43', 'T': '44', 'U': '45',
+        'V': '51', 'W': '52', 'X': '53', 'Y': '54', 'Z': '55'
+    }
+
+    ciphertext = ""
+    for char in plaintext:
+        char = char.upper()
+        if char in polybius_table:
+            ciphertext += polybius_table[char]
+        elif char == " ":
+            ciphertext += " "
+    return ciphertext.strip()
+
+def decrypt_simple_polybius(ciphertext):
+    polybius_table = {
+        '11': 'A', '12': 'B', '13': 'C', '14': 'D', '15': 'E',
+        '21': 'F', '22': 'G', '23': 'H', '24': 'I/J', '25': 'K',
+        '31': 'L', '32': 'M', '33': 'N', '34': 'O', '35': 'P',
+        '41': 'Q', '42': 'R', '43': 'S', '44': 'T', '45': 'U',
+        '51': 'V', '52': 'W', '53': 'X', '54': 'Y', '55': 'Z'
+    }
+
+    plaintext = ""
+    ciphertext = ciphertext.replace(" ", "")
+    index = 0
+    while index < len(ciphertext):
+        char = ciphertext[index:index+2]
+        if char in polybius_table:
+            plaintext += polybius_table[char]
+        index += 2
+    return plaintext
+
+
+
+import sys
+encrypt_or_decrypt = input("暗号化または復号化 en OR de :")
+text = input("暗号化するテキスト: ")
+
+if encrypt_or_decrypt == "en":
+    changed_text = encrypt_simple_polybius(text)
+    print("暗号化されたテキスト: ", changed_text)
+
+elif encrypt_or_decrypt == "de":
+    changed_text = decrypt_simple_polybius(text)
+    print("復号化されたテキスト: ", changed_text)
+
+else:
+    print("失敗しました。")
+    sys.exit() 
+    #これが無くても終了するがエラーメッセージを出さずに済む
