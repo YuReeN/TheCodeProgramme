@@ -1,0 +1,2 @@
+alphabet_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+external_alphabet = list(alphabet_string)
