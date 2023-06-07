@@ -6,17 +6,17 @@ def encrypt_ADFGVX(table_key, key, text):
     table = np.empty((6,6), dtype='U1')
     table_key_index = 0
     
-    for i in range(6):
-        for j in range(6):
+    for i in range(1,6):
+        for j in range(1,6):
             table[i][j] = table_key[table_key_index]
             table_key_index += 1
     
     arranged_text = text.replace(" ","").replace("\n","").lower()
+    encrypted_text_middle = ""
     for char in arranged_text:
-        encrypted_text_middle = ""
         # テーブル内の各要素を検索
-        for i in range(6):
-            for j in range(6):
+        for i in range(1,6):
+            for j in range(1,6):
                 if table[i][j] == char:
                     encrypted_text_middle += str(i) + str(j)
     
@@ -31,22 +31,94 @@ def encrypt_ADFGVX(table_key, key, text):
     # 文字に対応する数字を割り振る辞書を作成
     number_dict = {char: i+1 for i, char in enumerate(alphabet)}
     # 入力文字列の各文字に対応する数字を取得してリスト化
-    arranged_key_2 = [number_dict[char] for char in arranged_key]
-    
+    arranged_key_2_list = [number_dict[char] for char in arranged_key]
+
+    sorted_list = sorted(arranged_key_2_list)  # 数字が小さい順にソートされたリストを取得
+    index_mapping = {value: index + 1 for index, value in enumerate(sorted_list)}  # 数値と番号のマッピング辞書を作成
+    arranged_key_2_list_order = [index_mapping[value] for value in arranged_key_2_list]  # 新しい番号を振り直したリストを作成
+
     
     #二回目の換字
-    second_index = 0
-    second_table_range = math.ceil(len(encrypted_text_middle)/len(arranged_key_2))
+    second_table_row_range = math.ceil(len(encrypted_text_middle)/len(arranged_key_2_list))
 
-    table_2 = np.empty((second_table_range,arranged_key_2), dtype='U1')
+    arranged_key_2_int = int("".join(map(str, arranged_key_2_list)))
+    table_2 = np.empty((second_table_row_range,arranged_key_2_int), dtype='U1')
     table_key_index_2 = 0
-    for i in range(second_table_range):
-        for j in range(len(arranged_key_2)):
-            table_2[i][j] = encrypted_text_middle[table_key_index_2]
-            table_key_index_2 += 1
+    for i in range(second_table_row_range):
+        for j in range(len(arranged_key_2_list)):
+            if table_key_index_2 < len(encrypted_text_middle):
+                table_2[i][j] = encrypted_text_middle[table_key_index_2]
+                table_key_index_2 += 1
+            else:
+                break
     
     
     #リストに含まれる数字の小さい順番から列を指定して、その列の文字を文字列に追加する
-    for 
+    encrypted_text = ""
+    for i in range(1,len(arranged_key_2_list)+1):
+        column = arranged_key_2_list_order.index(i)
+        for row in table_2:
+            row_sentence = row[column]
+            encrypted_text += str(row_sentence)
+    
+    return encrypted_text
 
+def decrypt_ADFGVX(table_key, key, encrypted_text):
+    table = np.empty((6, 6), dtype='U1')
+    table_key_index = 0
+    
+    for i in range(1, 6):
+        for j in range(1, 6):
+            table[i][j] = table_key[table_key_index]
+            table_key_index += 1
+    
+    key = key.lower()
+    arranged_key = ""
+    for char in key:
+        if char not in arranged_key:
+            arranged_key += char
+    
+    alphabet = string.ascii_lowercase
+    number_dict = {char: i + 1 for i, char in enumerate(alphabet)}
+    arranged_key_2_list = [number_dict[char] for char in arranged_key]
 
+    sorted_list = sorted(arranged_key_2_list)
+    index_mapping = {value: index + 1 for index, value in enumerate(sorted_list)}
+    arranged_key_2_list_order = [index_mapping[value] for value in arranged_key_2_list]
+
+    second_table_row_range = math.ceil(len(encrypted_text) / len(arranged_key_2_list))
+    arranged_key_2_int = int("".join(map(str, arranged_key_2_list)))
+    table_2 = np.empty((second_table_row_range, arranged_key_2_int), dtype='U1')
+    table_key_index_2 = 0
+    for i in range(second_table_row_range):
+        for j in range(len(arranged_key_2_list)):
+            if table_key_index_2 < len(encrypted_text):
+                table_2[i][j] = encrypted_text[table_key_index_2]
+                table_key_index_2 += 1
+            else:
+                break
+    
+    decrypted_text = ""
+    for row in table_2:
+        for i in range(1, len(arranged_key_2_list) + 1):
+            column = arranged_key_2_list_order.index(i)
+            if column < len(row):
+                decrypted_text += str(row[column])
+
+    decrypted_text_middle = ""
+    for i in range(0, len(decrypted_text), 2):
+        row_index = int(decrypted_text[i])
+        column_index = int(decrypted_text[i+1])
+        decrypted_text_middle += table[row_index][column_index]
+
+    return decrypted_text_middle
+
+table_key = 'abcdefghijklmnopqrstuvwxyz0123456789'
+key = "abcde"
+text = "abcde"
+
+encrypted_text = encrypt_ADFGVX(table_key, key, text)
+print("Encrypted text:", encrypted_text)
+
+decrypted_text = decrypt_ADFGVX(table_key, key, encrypted_text)
+print("Decrypted text:", decrypted_text)
