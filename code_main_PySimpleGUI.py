@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import random
 
 #Caesar
 def caesar_encrypt(text, shift):
@@ -39,8 +40,48 @@ def vigenere_decrypt(text, key):
     return decrypted_text
 
 #Polybius
+alphabet_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+polybius_table = {
+    'A': '11', 'B': '12', 'C': '13', 'D': '14', 'E': '15',
+    'F': '21', 'G': '22', 'H': '23', 'I': '23', 'J': '24', 'K': '25',
+    'L': '31', 'M': '32', 'N': '33', 'O': '34', 'P': '35',
+    'Q': '41', 'R': '42', 'S': '43', 'T': '44', 'U': '45',
+    'V': '51', 'W': '52', 'X': '53', 'Y': '54', 'Z': '55'
+}
 def polybius_encrypt(text, key):
-    return
+    # 入力されたkeyでpolybius_tableを置換した新たなテーブルを作成
+    new_polybius_table = {}
+    for i, char in enumerate(key):
+        new_polybius_table[alphabet_string[i]] = polybius_table[char]
+
+    # 平文を暗号化
+    encrypted_text = ""
+    for char in text:
+        char = char.upper()
+        if char in new_polybius_table:
+            encrypted_text += new_polybius_table[char]
+        elif char == " ":
+            encrypted_text += " "
+    return encrypted_text
+def polybius_decrypt(text, key):
+    # 入力されたkeyでpolybius_tableを置換した新たなテーブルを作成
+    new_polybius_table = {}
+    for i, char in enumerate(key):
+        new_polybius_table[polybius_table[char]] = alphabet_string[i]
+
+    # 暗号文を復号化
+    decrypted_text = ""
+    encrypted_text = text.replace(" ", "")
+    index = 0
+    while index < len(encrypted_text):
+        char = encrypted_text[index:index+2]
+        if char in new_polybius_table:
+            decrypted_text += new_polybius_table[char]
+        index += 2
+    return decrypted_text
+
+
+
 
 # シーザー暗号タブのレイアウト
 caesar_layout = [
@@ -55,7 +96,7 @@ vigenere_layout = [
 ]
 
 polybius_layout = [
-    [sg.Text("鍵:")],
+    [sg.Text("鍵:"), sg.Button("無作為", key="-POLYBIUSKEYRANDOM-")],
     [sg.Input(key="-POLYBIUS-KEY-")]
 ]
 
@@ -63,12 +104,12 @@ polybius_layout = [
 tab_layout = [
     [sg.Tab("シーザー暗号", caesar_layout, expand_x=True, key="-TABCAESAR-")],
     [sg.Tab("ヴィジュネル暗号", vigenere_layout, expand_x=True, key= "-TABVIGENERE-")],
-    [sg.Tab("ポリビオス暗号")]
+    [sg.Tab("ポリビオス暗号", polybius_layout, expand_x=True, key="-TABPOLYBIUS-")]
 ]
 
 # 平文の入力欄のレイアウト
 input_layout = [
-    [sg.Text("入力:")],
+    [sg.Text("入力:"), sg.Button("消去", key = "-CLEARTEXT-")],
     [sg.Multiline(key="-INPUT-", size=(40, 10), expand_x=True)],
 ]
 
@@ -107,6 +148,10 @@ while True:
                         window["-OUTPUT-"].update(encrypted_text)
                     else:
                         None
+                elif tab_title == "-TABPOLYBIUS-":
+                    key = values["-POLYBIUS-KEY-"]
+                    encrypted_text = polybius_encrypt(text, key)
+                    window["-OUTPUT-"].update(encrypted_text)
 
 
             elif values["-DECRYPT-"]:
@@ -121,13 +166,26 @@ while True:
                         window["-OUTPUT-"].update(decrypted_text)
                     else:
                         None
+                elif tab_title == "-TABPOLYBIUS-":
+                    key = values["-POLYBIUS-KEY-"]
+                    decrypted_text = polybius_decrypt(text, key)
+                    window["-OUTPUT-"].update(decrypted_text)
+                
             else:
                  None
         else:
              None
+    elif event == "-POLYBIUSKEYRANDOM-":
+        alphabet_random = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        polybius_random = ''.join(random.sample(alphabet_random, len(alphabet_random)))
+        window["-POLYBIUS-KEY-"].update(polybius_random)
+    
     elif event == "-COPY-":
-         copy_output = values["-OUTPUT-"]
-         window["-INPUT-"].update(copy_output)
+        copy_output = values["-OUTPUT-"]
+        window["-INPUT-"].update(copy_output)
+    
+    elif event == "-CLEARTEXT-":
+        window["-INPUT-"].update("")
          
 
 

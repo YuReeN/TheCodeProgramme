@@ -1,0 +1,68 @@
+def polybius_encrypt(text, key):
+    alphabet_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    polybius_table = {
+        'A': '11', 'B': '12', 'C': '13', 'D': '14', 'E': '15',
+        'F': '21', 'G': '22', 'H': '23', 'I': '24', 'J': '24', 'K': '25',
+        'L': '31', 'M': '32', 'N': '33', 'O': '34', 'P': '35',
+        'Q': '41', 'R': '42', 'S': '43', 'T': '44', 'U': '45',
+        'V': '51', 'W': '52', 'X': '53', 'Y': '54', 'Z': '55'
+    }
+
+    # 入力されたkeyでpolybius_tableを置換した新たなテーブルを作成
+    new_polybius_table = {}
+    for i, char in enumerate(key):
+        new_polybius_table[alphabet_string[i]] = polybius_table[char]
+
+    # 平文を暗号化
+    encrypted_text = ""
+    for char in text:
+        char = char.upper()
+        if char in new_polybius_table:
+            encrypted_text += new_polybius_table[char]
+        elif char == " ":
+            encrypted_text += " "
+    return encrypted_text
+
+text = input("平文を入力してください: ")
+key = input("アルファベット26文字のキーを入力してください: ")
+
+encrypted_text = polybius_encrypt(text, key)
+print("暗号化されたテキスト:", encrypted_text)
+
+
+def polybius_decrypt(encrypted_text, key):
+    alphabet_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    polybius_table = {
+        'A': '11', 'B': '12', 'C': '13', 'D': '14', 'E': '15',
+        'F': '21', 'G': '22', 'H': '23', 'I': '24', 'J': '24', 'K': '25',
+        'L': '31', 'M': '32', 'N': '33', 'O': '34', 'P': '35',
+        'Q': '41', 'R': '42', 'S': '43', 'T': '44', 'U': '45',
+        'V': '51', 'W': '52', 'X': '53', 'Y': '54', 'Z': '55'
+    }
+
+    # 入力されたkeyでpolybius_tableを置換した新たなテーブルを作成
+    new_polybius_table = {}
+    for i, char in enumerate(key):
+        new_polybius_table[polybius_table[char]] = alphabet_string[i]
+
+    # 暗号文を復号化
+    decrypted_text = ""
+    encrypted_text = encrypted_text.replace(" ", "")
+    index = 0
+    while index < len(encrypted_text):
+        char = encrypted_text[index:index+2]
+        if char in new_polybius_table:
+            decrypted_text += new_polybius_table[char]
+        index += 2
+    return decrypted_text
+
+encrypted_text = input("暗号文を入力してください: ")
+key = input("アルファベット26文字のキーを入力してください: ")
+
+decrypted_text = polybius_decrypt(encrypted_text, key)
+print("復号化されたテキスト:", decrypted_text)
+
+
+# 平文を入力してください: konnnitihaminasanngennkidesuka
+# アルファベット26文字のキーを入力してください: XAJYCUVLOWQPZSTGDKHNIREFMB
+# 暗号化されたテキスト: 414443434334333431535534435323534343511343434134541323244153

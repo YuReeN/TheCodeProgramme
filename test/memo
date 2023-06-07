@@ -1,27 +1,57 @@
-import random
+import numpy as np
 
-# 外部から得たアルファベットの羅列
-alphabet_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-external_alphabet = list(alphabet_string)
+def create_cipher_table(key):
+    key = key.lower()
+    characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
+    table = np.empty((6, 6), dtype='U1')
+    key_index = 0
+    
+    for i in range(6):
+        for j in range(6):
+            if key_index < len(key):
+                table[i][j] = key[key_index]
+                key_index += 1
+            else:
+                char_index = key_index - len(key)
+                table[i][j] = characters[char_index]
+                key_index += 1
+    
+    return table
 
-# ポリビウス暗号のテーブル
-polybius_table = {
-    '11': 'A', '12': 'B', '13': 'C', '14': 'D', '15': 'E',
-    '21': 'F', '22': 'G', '23': 'H', '24': 'I/J', '25': 'K',
-    '31': 'L', '32': 'M', '33': 'N', '34': 'O', '35': 'P',
-    '41': 'Q', '42': 'R', '43': 'S', '44': 'T', '45': 'U',
-    '51': 'V', '52': 'W', '53': 'X', '54': 'Y', '55': 'Z'
-}
+def decrypt(ciphertext, key, transposition_key):
+    table = create_cipher_table(key)
+    plaintext = ''
+    rows = len(ciphertext) // transposition_key
+    
+    for i in range(rows):
+        for j in range(transposition_key):
+            index = i + j * rows
+            plaintext += ciphertext[index]
+    
+    deciphered_ciphertext = ''
+    cols = len(plaintext) // 2
+    
+    for i in range(0, len(plaintext), 2):
+        row = 'ADFGVX'.index(plaintext[i])
+        col = 'ADFGVX'.index(plaintext[i+1])
+        deciphered_ciphertext += table[row][col]
+    
+    unique_chars = remove_duplicates(deciphered_ciphertext)
+    char_to_number = {str(index+1): char for index, char in enumerate(unique_chars)}
+    numbers = ''
+    
+    for char in deciphered_ciphertext:
+        numbers += char_to_number[char]
+    
+    sorted_word = sorted(numbers, key=lambda x: char_to_number[x])
+    plaintext = ''.join(sorted_word)
+    
+    return plaintext
 
-# ポリビウス暗号のテーブルの数字とアルファベットの組み合わせを変更する
-new_polybius_table = {}
-random.shuffle(external_alphabet)  # アルファベットリストをランダムにシャッフル
+# 例として与えられたデータでテスト
+key = 'dhxmu4p3j6aoibzv9w1n70qkfslyc8tr5e2g'
+ciphertext = 'DXGAXAAXXVDDFGFX'
+transposition_key = 5
 
-# アルファベットリストとポリビウス暗号の数字を1対1で対応付け
-for i, digit in enumerate(polybius_table):
-    new_polybius_table[digit] = external_alphabet[i]
-
-# 新しいポリビウス暗号のテーブルを表示
-print(new_polybius_table)
-
-
+plaintext = decrypt(ciphertext, key, transposition_key)
+print("復号化された平文:", plaintext)

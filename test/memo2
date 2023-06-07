@@ -1,2 +1,24 @@
-alphabet_string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-external_alphabet = list(alphabet_string)
+import numpy as np
+
+def extract_column_values(matrix, column_indices):
+    column_values = matrix[:, column_indices]
+    extracted_string = ''.join(column_values.flatten())
+    
+    return extracted_string
+
+# 六行六列の行列を作成
+matrix = np.array([
+    ['A', 'B', 'C', 'D', 'E', 'F'],
+    ['G', 'H', 'I', 'J', 'K', 'L'],
+    ['M', 'N', 'O', 'P', 'Q', 'R'],
+    ['S', 'T', 'U', 'V', 'W', 'X'],
+    ['Y', 'Z', '1', '2', '3', '4'],
+    ['5', '6', '7', '8', '9', '0']
+])
+
+# 抽出する列のインデックスをリストとして指定
+column_indices = [2, 4, 5]
+
+# 指定した列の値を抽出
+result_string = extract_column_values(matrix, column_indices)
+print(result_string)

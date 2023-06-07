@@ -1,0 +1,52 @@
+import numpy as np
+import string
+import math
+
+def encrypt_ADFGVX(table_key, key, text):
+    table = np.empty((6,6), dtype='U1')
+    table_key_index = 0
+    
+    for i in range(6):
+        for j in range(6):
+            table[i][j] = table_key[table_key_index]
+            table_key_index += 1
+    
+    arranged_text = text.replace(" ","").replace("\n","").lower()
+    for char in arranged_text:
+        encrypted_text_middle = ""
+        # テーブル内の各要素を検索
+        for i in range(6):
+            for j in range(6):
+                if table[i][j] == char:
+                    encrypted_text_middle += str(i) + str(j)
+    
+    key = key.lower()
+    arranged_key = ""
+    for char in key:
+        if char not in arranged_key:
+            arranged_key += char
+    
+    #鍵で一次暗号を分割する　つまり二回目の暗号化
+    alphabet = string.ascii_lowercase
+    # 文字に対応する数字を割り振る辞書を作成
+    number_dict = {char: i+1 for i, char in enumerate(alphabet)}
+    # 入力文字列の各文字に対応する数字を取得してリスト化
+    arranged_key_2 = [number_dict[char] for char in arranged_key]
+    
+    
+    #二回目の換字
+    second_index = 0
+    second_table_range = math.ceil(len(encrypted_text_middle)/len(arranged_key_2))
+
+    table_2 = np.empty((second_table_range,arranged_key_2), dtype='U1')
+    table_key_index_2 = 0
+    for i in range(second_table_range):
+        for j in range(len(arranged_key_2)):
+            table_2[i][j] = encrypted_text_middle[table_key_index_2]
+            table_key_index_2 += 1
+    
+    
+    #リストに含まれる数字の小さい順番から列を指定して、その列の文字を文字列に追加する
+    for 
+
+
