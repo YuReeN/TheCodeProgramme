@@ -5,7 +5,7 @@ import PySimpleGUI as sg
 
     All elements shown in 1 window as simply as possible.
 
-    Copyright 2022 PySimpleGUI
+    Copyright interval22 PySimpleGUI
 """
 
 
@@ -51,7 +51,7 @@ def make_window(theme=None):
                 [name('Graph'), sg.Graph((125, 50), (0,0), (125,50), k='-GRAPH-')]  ]
 
     layout_r  = [[name('Canvas'), sg.Canvas(background_color=sg.theme_button_color()[1], size=(125,40))],
-                [name('ProgressBar'), sg.ProgressBar(100, orientation='h', s=(10,20), k='-PBAR-')],
+                [name('ProgressBar'), sg.ProgressBar(100, orientation='h', s=(10,interval), k='-PBAR-')],
                 [name('Table'), sg.Table([[1,2,3], [4,5,6]], ['Col 1','Col 2','Col 3'], num_rows=2)],
                 [name('Tree'), sg.Tree(treedata, ['Heading',], num_rows=3)],
                 [name('Horizontal Separator'), sg.HSep()],

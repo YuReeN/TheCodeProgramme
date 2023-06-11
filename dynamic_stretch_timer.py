@@ -3,14 +3,12 @@ import time
 
 def timer_gui(n):
     text_list = ['北海道', '青森', '岩手', '宮城', '秋田', '山形', '福島']
-    text_index = 0
     interval = 5
 
     layout = [
         [sg.Text('')],
         [sg.Text('測定時間:', key='-TIME-', size=(40, 1), justification='center')],
         [sg.Text('')],
-        [sg.Text('', key='-TEXT-', size=(40, 1), justification='center')],
         [sg.Text("text1", key="-TEST-")],
         [sg.Text("text2", key="-TEST2-")],
         [sg.Button('スタート', key='-START-', size=(10, 1)), sg.Button('終了', key='-EXIT-', size=(10, 1))]
@@ -44,13 +42,15 @@ def timer_gui(n):
             else:
                 window['-TIME-'].update(f'{remaining_time}秒')
 
-                if remaining_time == 0:
-                    count += 1
-                    window['-TEXT-'].update(text_list[text_index])
-                    text_index = (text_index + 1) % len(text_list)
+
 
     window.close()
 
-if __name__ == '__main__':
-    n = int(input('繰り返し回数（N）を入力してください: '))
-    timer_gui(n)
+
+n = 10
+timer_gui(10)
+
+
+# if __name__ == '__main__':
+#     n = int(input('繰り返し回数（N）を入力してください: '))
+#     timer_gui(n)
