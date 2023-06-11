@@ -3,7 +3,7 @@ import time
 import winsound
 import threading
 
-interval = 1
+interval = 20
 text_list = ["首を左右、前後、ゆっくり回す",
              "胸を張って肩を耳に当てる",
              "肩を大きく回す",
